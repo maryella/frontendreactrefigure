@@ -3,10 +3,11 @@ import React, { Component } from "react";
 import { loadData } from "../util/loadData";
 
 
+
 export class BikeInfo extends Component {
     state = {
-        title: "Loading title",
-        description: "Loading description",
+        titles: [],
+        descriptions: []
     }
 
     async componentDidMount(){
@@ -15,24 +16,38 @@ export class BikeInfo extends Component {
 
     getInfo = async () => {
         const response = await loadData(`https://bikewise.org:443/api/v2/locations/markers?proximity=atlanta&proximity_square=100`)
-        const inctitle = response.features[0]['properties']['title']
-        const incdescription = response.features[0]['properties']['description']
-
+        let titleList = []
+        let descriptionList = []
+        for (let i = 0; i < response.features.length; i++){
+            let title = response.features[i]['properties']['title']
+            let description = response.features[i]['properties']['description']
+            titleList.push(title)
+            descriptionList.push(description);
+        }
         this.setState({
-            title : inctitle,
-            description: incdescription
+            titles: titleList,
+            descriptions: descriptionList
         })
     };
 
     render () {
-        const display_title = this.state.title;
-        const display_description = this.state.description;
-        console.log (this.state.title)
+        const display_titles = this.state.titles;
+        const display_descriptions = this.state.descriptions;
+        console.log(display_descriptions)
         return (
-            <div>
-            <h3>{display_title}</h3>
-            <p>{display_description}</p>
-            </div>
+            <>
+          
+            {display_titles.map((incident, id) => {
+                    return ( 
+                        <h3 key={`incident-${id}`}>
+                            {incident}
+                        </h3>
+              
+                    );
+                })}
+           
+     
+            </>
         );
     }
 }
